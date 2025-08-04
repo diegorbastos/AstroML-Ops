@@ -3,6 +3,9 @@ __pycache__/
 .env
 *.pkl
 *.joblib
-data/
 models/
 .dvc/
+data/*
+
+!data/processed/
+!data/processed/*.csv
