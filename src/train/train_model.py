@@ -31,11 +31,10 @@ def train_and_evaluate(X_train, X_test, y_train, y_test):
     )
 
     model.fit(X_train, y_train)
-    print("Modelo Treinado")
+    #print("Modelo Treinado")
 
     y_pred = model.predict(X_test)
 
-    print("Relatrio de Classificacao")
     print(classification_report(y_test, y_pred, digits=4))
 
     return model

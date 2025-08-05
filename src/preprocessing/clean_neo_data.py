@@ -39,7 +39,6 @@ if __name__ == "__main__":
     for file in os.listdir(raw_folder):
         if file.endswith(".json"):
             json_path = os.path.join(raw_folder, file)
-            print(f"📄 Processando {json_path}")
             df = extract_neo_data(json_path)
             all_dfs.append(df)
 
