@@ -27,15 +27,28 @@ def extract_neo_data(json_path):
                 all_objects.append(neo_info)
 
             except (KeyError, IndexError, TypeError):
-                continue  # pula objetos com dados faltando
+                continue
 
     return pd.DataFrame(all_objects)
 
 if __name__ == "__main__":
-    input_file = "data/raw/neo_2025-07-30_2025-08-01.json"
+    raw_folder = "data/raw"
     output_file = "data/processed/neo_data.csv"
 
-    df = extract_neo_data(input_file)
+    all_dfs = []
+    for file in os.listdir(raw_folder):
+        if file.endswith(".json"):
+            json_path = os.path.join(raw_folder, file)
+            print(f"📄 Processando {json_path}")
+            df = extract_neo_data(json_path)
+            all_dfs.append(df)
 
-    df.to_csv(output_file, index=False)
-    print(f"CSV salvo em {output_file} com {len(df)} registros.")
+    if all_dfs:
+        full_df = pd.concat(all_dfs, ignore_index=True)
+        full_df = full_df.drop_duplicates().dropna()
+
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+        full_df.to_csv(output_file, index=False)
+        print(f"Dados combinados salvos em {output_file} com {len(full_df)} registros.")
+    else:
+        print("Nenhum arquivo .json encontrado em data/raw/")
