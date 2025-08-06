@@ -5,6 +5,7 @@ __pycache__/
 *.joblib
 models/
 .dvc/
+mlruns/
 data/*
 
 !data/processed/

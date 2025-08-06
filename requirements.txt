@@ -1,1 +1,7 @@
-requests
+fastapi
+uvicorn
+pandas
+scikit-learn
+joblib
+python-dotenv
+mlflow
