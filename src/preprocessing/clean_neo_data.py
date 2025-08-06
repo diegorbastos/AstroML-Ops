@@ -33,7 +33,8 @@ def extract_neo_data(json_path):
 
 if __name__ == "__main__":
     raw_folder = "data/raw"
-    output_file = "data/processed/neo_data.csv"
+    output_clean = "data/processed/neo_data.csv"
+    output_balanced = "data/processed/neo_data_balanced.csv"
 
     all_dfs = []
     for file in os.listdir(raw_folder):
@@ -46,8 +47,21 @@ if __name__ == "__main__":
         full_df = pd.concat(all_dfs, ignore_index=True)
         full_df = full_df.drop_duplicates().dropna()
 
-        os.makedirs(os.path.dirname(output_file), exist_ok=True)
-        full_df.to_csv(output_file, index=False)
-        print(f"Dados combinados salvos em {output_file} com {len(full_df)} registros.")
+        os.makedirs(os.path.dirname(output_clean), exist_ok=True)
+        full_df.to_csv(output_clean, index=False)
+        print(f"Dados combinados salvos em {output_clean} com {len(full_df)} registros.")
+
+        hazardous = full_df[full_df["is_hazardous"] == True]
+        non_hazardous = full_df[full_df["is_hazardous"] == False]
+
+        if not hazardous.empty:
+            REPLICATION_FACTOR = 5
+            hazardous_upsampled = pd.concat([hazardous] * REPLICATION_FACTOR, ignore_index=True)
+            df_balanced = pd.concat([hazardous_upsampled, non_hazardous], ignore_index=True)
+            df_balanced = df_balanced.sample(frac=1).reset_index(drop=True)
+            df_balanced.to_csv(output_balanced, index=False)
+            print(f"Dados balanceados salvos em {output_balanced} com {len(df_balanced)} registros.")
+        else:
+            print("Nenhum NEO perigoso encontrado para oversample.")
     else:
         print("Nenhum arquivo .json encontrado em data/raw/")
