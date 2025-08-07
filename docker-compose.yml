@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  astroml-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: astroml-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models
+      - ./mlruns:/app/mlruns
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+
+  mlflow-ui:
+    image: ghcr.io/mlflow/mlflow
+    container_name: mlflow-ui
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlflow/mlruns
+    command: mlflow ui --backend-store-uri /mlflow/mlruns --host 0.0.0.0
+    restart: unless-stopped
