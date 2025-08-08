@@ -6,6 +6,7 @@ __pycache__/
 models/
 .dvc/
 mlruns/
+monitoring/logs/
 data/*
 
 !data/processed/

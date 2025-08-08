@@ -1,5 +1,6 @@
 import joblib
 import os
+import json
 
 def load_model(model_path: str = "models/best_model.pkl"):
     if not os.path.exists(model_path):

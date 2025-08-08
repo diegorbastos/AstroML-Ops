@@ -1,8 +1,10 @@
-fastapi
-uvicorn
 pandas
 scikit-learn
 joblib
-python-dotenv
+fastapi
+uvicorn
 mlflow
-evidently>=0.4.9
+matplotlib
+evidently
+python-dotenv
+requests
