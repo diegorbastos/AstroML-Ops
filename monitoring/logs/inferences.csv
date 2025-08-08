@@ -1,3 +1,0 @@
-timestamp,diameter_min_m,diameter_max_m,miss_distance_km,velocity_kph,is_hazardous
-2025-08-07T18:42:23.148924,0.0,0.0,0.0,0.0,False
-2025-08-07T18:42:52.991423,150.0,300.0,700000.0,40000.0,True
