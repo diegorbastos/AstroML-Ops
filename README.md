@@ -1,105 +1,118 @@
-# 🚀 AstroML Ops — NEO Hazard Classification (v1.0.0)
+# AstroML Ops — NEO Hazard Classification
 
-A complete **MLOps pipeline** to download NASA NEO (Near-Earth Objects) data, preprocess it, train a classifier for potentially hazardous asteroids, serve predictions via a FastAPI API, and monitor model drift with **Evidently** and experiment tracking with **MLflow**.
+I developed **AstroML Ops** as an end-to-end **MLOps pipeline** to process and classify NASA Near-Earth Objects (NEO) data.  
+The goal is to identify potentially hazardous asteroids through a fully automated workflow that covers data acquisition, preprocessing, model training, deployment, and continuous monitoring.
 
----
-
-## 🔭 Overview
-- **Ingestion** → Fetches NEO data from NASA's public API.
-- **Preprocessing** → Extracts relevant features, cleans data, and stores CSVs.
-- **Training** → RandomForest model (v1.0) with experiment logging in MLflow.
-- **Serving** → FastAPI REST API with `/predict`, `/health`, `/version` endpoints.
-- **Monitoring** → Drift detection with Evidently (HTML reports).
-- **Pipeline** → Single script to orchestrate the entire flow.
+This solution integrates **FastAPI** for serving predictions, **MLflow** for experiment tracking and model management, and **Evidently** for data drift detection and reporting.
 
 ---
 
-## 🧱 Project Structure
+## Project Overview
 
-├── notebooks/ # Jupyter notebook for EDA and experiments
-├── pipelines/ # Full pipeline orchestration  
-├── src/  
-│ ├── ingest/ # Data download from NASA  
-│ ├── preprocessing/ # Data cleaning and processing  
-│ ├── train/ # Model training + MLflow tracking  
-│ ├── serve/ # FastAPI app, prediction, schema  
-│ └── evaluate/ # Drift reports with Evidently  
-├── data/processed/ # Processed CSVs  
-├── monitoring/  
-│ ├── reports/ # Drift reports, confusion matrix  
-├── tests/ # Smoke tests for API and best model test
-├── requirements.txt  
-├── docker-compose.yml  
-├── Dockerfile  
-├── .env.example  
-└── README.md
+The pipeline is composed of the following stages:
+
+- **Ingestion** → Automated retrieval of NEO data from NASA’s public API.  
+- **Preprocessing** → Feature extraction, data cleaning, and generation of structured datasets.  
+- **Training** → RandomForest model (v1.0) with experiment tracking and artifact logging in MLflow.  
+- **Serving** → REST API (FastAPI) providing endpoints for predictions, health checks, and model versioning.  
+- **Monitoring** → Continuous drift analysis and visual reporting with Evidently.  
+- **Pipeline Orchestration** → A single script to execute the entire workflow end-to-end.
 
 ---
 
-## ⚙️ Requirements
-- Python **3.11+**
-- (Optional) Docker + Docker Compose
-- NASA API key → [Get here](https://api.nasa.gov/)
+## Project Structure
+```
+notebooks/        # Exploratory data analysis and experiments
+pipelines/        # Orchestration scripts
+src/  
+  ingest/         # Data ingestion from NASA API  
+  preprocessing/  # Data cleaning and transformation  
+  train/          # Model training and MLflow tracking  
+  serve/          # FastAPI application and schema definitions  
+  evaluate/       # Model drift analysis and reporting  
+data/processed/   # Processed datasets  
+monitoring/  
+  reports/        # Drift and performance reports  
+tests/            # API and model validation tests
+```
 
 ---
 
-## 🔑 Environment Variables
-Create a `.env` file based on `.env.example`:  
-`NASA_API_KEY=YOUR_KEY_HERE`
+## Requirements
+
+- Python **3.11+**  
+- (Optional) Docker + Docker Compose  
+- NASA API Key → [Request here](https://api.nasa.gov/)
 
 ---
 
-## 🚀 Running Locally (without Docker)
+## Environment Setup
 
-### Install dependencies
+Create a `.env` file based on `.env.example`:
+
+```
+NASA_API_KEY=YOUR_KEY_HERE
+```
+
+---
+
+## Running Locally (Without Docker)
+
+**Install dependencies:**
 ```bash
 pip install -r requirements.txt
 ```
 
-### Run full pipeline (ingest → preprocess → train → drift reports)
-
-**Windows (PowerShell):**
+**Run the complete pipeline (ingestion → preprocessing → training → reporting):**
+- Windows (PowerShell):
 ```bash
 $env:PYTHONPATH="."; python pipelines/full_pipeline.py
 ```
-
-**Linux/macOS:**
+- Linux/macOS:
 ```bash
 PYTHONPATH=. python pipelines/full_pipeline.py
 ```
 
-### Start API
+**Start the API:**
 ```bash
 uvicorn src.serve.main:app --reload
 ```
-Docs: [http://localhost:8000/docs](http://localhost:8000/docs)
+API documentation: [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ---
 
-## 🐳 Running with Docker
+## Running with Docker
 ```bash
 docker compose up --build
 ```
-- API → [http://localhost:8000/docs](http://localhost:8000/docs)
-- MLflow → [http://localhost:5000](http://localhost:5000)
-- Drift reports → `monitoring/reports/*.html`
+- API: [http://localhost:8000/docs](http://localhost:8000/docs)  
+- MLflow: [http://localhost:5000](http://localhost:5000)  
+- Drift reports: `monitoring/reports/*.html`
 
 ---
 
-## 🔍 Monitoring & Tracking
-- **Evidently** → HTML reports for:
-  - Training vs Current Data (drift_report.html)
-  - Training vs API Inferences (api_drift_report.html)
+## Monitoring & Experiment Tracking
 
-- **MLflow** → parameters, metrics, confusion matrix, classification report.
+- **Evidently** → Generates HTML reports comparing:
+  - Training data vs current dataset (`drift_report.html`)  
+  - Training data vs API inference data (`api_drift_report.html`)
+- **MLflow** → Records model parameters, evaluation metrics, confusion matrices, and classification reports.
 
 ---
 
-## 🧪 API Endpoints
-- **GET /health** → Health check
-- **GET /version** → Model version
-- **POST /predict** → Example request:
+## Skills & Technologies
+- **Programming:** Python 3.11+  
+- **Machine Learning:** scikit-learn, pandas, NumPy  
+- **MLOps & Monitoring:** MLflow, Evidently  
+- **API Development:** FastAPI, Uvicorn  
+- **Infrastructure:** Docker, Docker Compose  
+- **Data Source:** NASA Near-Earth Objects (NEO) API  
 
+---
+
+## Example Prediction
+
+**Request:**
 ```json
 {
   "diameter_min_m": 120.0,
@@ -109,19 +122,7 @@ docker compose up --build
 }
 ```
 
-Response:
+**Response:**
 ```json
 { "is_hazardous": true }
 ```
-
----
-
-## ⚠ Known Issues
-- **Inflated F1-score** → Current version uses oversampling on the entire dataset, which may lead to unrealistically high F1.
-- **Unrealistic inputs** → Very atypical or extreme values may result in unexpected predictions.
-
----
-
-## 🗺 Future Versions
-- Oversample only on training set
-- Cross-validation and hyperparameter tuning
